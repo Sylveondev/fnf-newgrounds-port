@@ -1,4 +1,8 @@
-# Friday Night Funkin
+# Friday Night Funkin Newgrounds Port Description
+
+This is the repository for the Friday Night Funkin Newgrounds Port, based on the vanilla repository and ported Newgrounds content.
+
+# (Original Friday Night Funkin Description)
 
 This is the repository for Friday Night Funkin, a game originally made for Ludum Dare 47 "Stuck In a Loop".
 
