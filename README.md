@@ -1,6 +1,12 @@
-# Friday Night Funkin Newgrounds Port Description
+# Friday Night Funkin Newgrounds Port
 
-This is the repository for the Friday Night Funkin Newgrounds Port, based on the vanilla repository and ported Newgrounds content.
+This is the repository for the Friday Night Funkin Newgrounds Port, based on the vanilla repository, ported Newgrounds content, and filled holes in the code. It isn't the most direct port, but it'll be the best we have until v0.2.8 actually releases.
+
+## Credits
+
+- [AngelDTF (me!)](https://github.com/AngelDTF) - Programmer
+- [ShadowMario](https://github.com/ShadowMario) - Creator of the Psychic Engine, which includes open source v0.2.8 code
+- [BulbyVR](https://github.com/TheDrawingCoder-Gamer) - Creator of FNF Modding Plus, which also includes open source v0.2.8 code
 
 # (Original Friday Night Funkin Description)
 
