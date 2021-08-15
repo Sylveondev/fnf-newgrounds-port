@@ -1,5 +1,6 @@
 package;
 
+import flixel.addons.transition.TransitionTiles;
 import flixel.math.FlxAngle;
 import flixel.group.FlxSpriteGroup;
 import flixel.group.FlxGroup;
@@ -1038,7 +1039,7 @@ class PlayState extends MusicBeatState
 						{
 							inCutscene = true;
 							Main.cutscene.visible = true;
-							Main.cutsceneStream.play('http://127.0.0.1:3000/assets/music/ughCutscene.mp4');
+							Main.cutsceneStream.play('assets/music/ughCutscene.mp4');
 							new FlxTimer().start(719/60, function(tmr:FlxTimer)
 							{
 								trace("cutscene finished");
@@ -1055,7 +1056,7 @@ class PlayState extends MusicBeatState
 						{
 							inCutscene = true;
 							Main.cutscene.visible = true;
-							Main.cutsceneStream.play('http://127.0.0.1:3000/assets/music/gunsCutscene.mp4');
+							Main.cutsceneStream.play('assets/music/gunsCutscene.mp4');
 							new FlxTimer().start(652/60, function(tmr:FlxTimer)
 							{
 								trace("cutscene finished");
@@ -1072,7 +1073,7 @@ class PlayState extends MusicBeatState
 						{
 							inCutscene = true;
 							Main.cutscene.visible = true;
-							Main.cutsceneStream.play('http://127.0.0.1:3000/assets/music/stressCutscene.mp4');
+							Main.cutsceneStream.play('assets/music/stressCutscene.mp4');
 							new FlxTimer().start(2107/60, function(tmr:FlxTimer)
 							{
 								trace("cutscene finished");
@@ -2073,7 +2074,10 @@ class PlayState extends MusicBeatState
 				transIn = FlxTransitionableState.defaultTransIn;
 				transOut = FlxTransitionableState.defaultTransOut;
 
-				FlxG.switchState(new StoryMenuState());
+				if (curSong.toLowerCase() == 'stress')
+					FlxG.switchState(new TrailerState());
+				else
+					FlxG.switchState(new StoryMenuState());
 
 				// if ()
 				StoryMenuState.weekUnlocked[Std.int(Math.min(storyWeek + 1, StoryMenuState.weekUnlocked.length - 1))] = true;
