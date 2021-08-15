@@ -2,11 +2,15 @@
 
 This is the repository for the Friday Night Funkin Newgrounds Port, based on the vanilla repository, ported Newgrounds content, and filled holes in the code. It isn't the most direct port, but it'll be the best we have until v0.2.8 actually releases.
 
+## Asset Info
+All of the assets were dumped from the Newgrounds site. Any pre-existing OGG files were reused to ensure higher quality when building for PC. Any new sounds without pre-existing OGGs were converted for PC builds. All videos were also converted and saved as an additional WEBM file for PC compatibility with cutscenes.
+
 ## Credits
 
-- [AngelDTF (me!)](https://github.com/AngelDTF) - Programmer
-- [ShadowMario](https://github.com/ShadowMario) - Creator of the Psychic Engine, which includes open source v0.2.8 code
-- [BulbyVR](https://github.com/TheDrawingCoder-Gamer) - Creator of FNF Modding Plus, which also includes open source v0.2.8 code
+- [AngelDTF (me!)](https://github.com/AngelDTF) - Programmer / Filling in the missing holes
+- [ShadowMario](https://github.com/ShadowMario) - Creator of the Psychic Engine, which includes open source v0.2.8 code / UI Elements from v0.2.8
+- [BulbyVR](https://github.com/TheDrawingCoder-Gamer) - Creator of FNF Modding Plus, which also includes open source v0.2.8 code / Week 7 Elements
+(side-note: I did not work with the above 2 people)
 
 # (Original Friday Night Funkin Description)
 
