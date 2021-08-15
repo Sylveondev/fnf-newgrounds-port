@@ -10,6 +10,7 @@ All of the assets were dumped from the Newgrounds site. Any pre-existing OGG fil
 - [AngelDTF (me!)](https://github.com/AngelDTF) - Programmer / Filling in the missing holes
 - [ShadowMario](https://github.com/ShadowMario) - Creator of the Psychic Engine, which includes open source v0.2.8 code / UI Elements from v0.2.8
 - [BulbyVR](https://github.com/TheDrawingCoder-Gamer) - Creator of FNF Modding Plus, which also includes open source v0.2.8 code / Week 7 Elements
+
 (side-note: I did not work with the above 2 people)
 
 # (Original Friday Night Funkin Description)
