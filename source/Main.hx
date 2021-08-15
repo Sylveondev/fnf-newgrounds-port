@@ -1,5 +1,9 @@
 package;
 
+import openfl.net.NetConnection;
+import openfl.net.NetStream;
+import openfl.media.Video;
+import flixel.FlxG;
 import flixel.FlxGame;
 import flixel.FlxState;
 import openfl.Assets;
@@ -17,6 +21,10 @@ class Main extends Sprite
 	var framerate:Int = 60; // How many frames per second the game should run at.
 	var skipSplash:Bool = true; // Whether to skip the flixel splash screen that appears in release mode.
 	var startFullscreen:Bool = false; // Whether to start the game in fullscreen on desktop targets
+	public static var fpsVar:FPS;
+	public static var cutscene:Video;
+	public static var cutsceneConnection:NetConnection;
+	public static var cutsceneStream:NetStream;
 
 	// You can pretty much ignore everything from here on - your code should go in your states.
 
@@ -69,8 +77,33 @@ class Main extends Sprite
 
 		addChild(new FlxGame(gameWidth, gameHeight, initialState, zoom, framerate, framerate, skipSplash, startFullscreen));
 
-		#if !mobile
-		addChild(new FPS(10, 3, 0xFFFFFF));
+		#if web
+		cutscene = new Video(1280, 720);
+		cutsceneConnection = new NetConnection();
+		cutsceneConnection.connect(null);
+		cutsceneStream = new NetStream(cutsceneConnection);
+		cutscene.attachNetStream(cutsceneStream);
+		cutscene.visible = false;
+		addChild(cutscene);
 		#end
+
+		#if !mobile
+		fpsVar = new FPS(10, 3, 0xFFFFFF);
+		addChild(fpsVar);
+		#end
+
+		ClientPrefs.loadPrefs();
+		if(Main.fpsVar != null) {
+			if(ClientPrefs.fpsCounter) {
+				Main.fpsVar.x = 10;
+			} else {
+				Main.fpsVar.x = -100;
+			}
+		}
+		if (ClientPrefs.autoPause) {
+			FlxG.autoPause = true;
+		} else {
+			FlxG.autoPause = false;
+		}
 	}
 }

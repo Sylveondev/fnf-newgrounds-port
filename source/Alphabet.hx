@@ -18,8 +18,16 @@ class Alphabet extends FlxSpriteGroup
 	public var paused:Bool = false;
 
 	// for menu shit
+	public var forceX:Float = Math.NEGATIVE_INFINITY;
+	public var forceY:Float = Math.NEGATIVE_INFINITY;
 	public var targetY:Float = 0;
+	public var yMult:Float = 120;
+	public var xAdd:Float = 0;
+	public var yAdd:Float = 0;
 	public var isMenuItem:Bool = false;
+	public var textSize:Float = 1.0;
+	public var lerpMult:Float = 9.6;
+	public var overrideSpaceChar:Bool = false;
 
 	public var text:String = "";
 
@@ -40,9 +48,14 @@ class Alphabet extends FlxSpriteGroup
 
 	var isBold:Bool = false;
 
-	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false)
+	public function new(x:Float, y:Float, text:String = "", ?bold:Bool = false, typed:Bool = false, ?typingSpeed:Float = 0.05, ?textSize:Float = 1, ?lerpMult = 9.6, ?overrideSpaceChar:Bool = false)
 	{
 		super(x, y);
+		forceX = Math.NEGATIVE_INFINITY;
+		forceY = Math.NEGATIVE_INFINITY;
+		this.textSize = textSize;
+		this.lerpMult = lerpMult;
+		this.overrideSpaceChar = overrideSpaceChar;
 
 		_finalText = text;
 		this.text = text;
@@ -72,12 +85,14 @@ class Alphabet extends FlxSpriteGroup
 			// {
 			// }
 
-			if (character == " " || character == "-")
+			if (character == " " || (!overrideSpaceChar && character == "-"))
 			{
 				lastWasSpace = true;
 			}
 
-			if (AlphaCharacter.alphabet.indexOf(character.toLowerCase()) != -1)
+			if (AlphaCharacter.alphabet.indexOf(character.toLowerCase()) != -1
+			||	(AlphaCharacter.symbols.indexOf(character.toLowerCase()) != -1 && !lastWasSpace)
+			||	AlphaCharacter.numbers.indexOf(character.toLowerCase()) != -1)
 				// if (AlphaCharacter.alphabet.contains(character.toLowerCase()))
 			{
 				if (lastSprite != null)
@@ -91,14 +106,19 @@ class Alphabet extends FlxSpriteGroup
 					lastWasSpace = false;
 				}
 
-				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
-				var letter:AlphaCharacter = new AlphaCharacter(xPos, 0);
+				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0, textSize);
+				var letter:AlphaCharacter = new AlphaCharacter(xPos, 0, textSize);
 
 				if (isBold)
 					letter.createBold(character);
 				else
 				{
-					letter.createLetter(character);
+					if (AlphaCharacter.alphabet.indexOf(character.toLowerCase()) != -1)
+						letter.createLetter(character);
+					else if (AlphaCharacter.symbols.indexOf(character.toLowerCase()) != -1 && !lastWasSpace)
+						letter.createSymbol(character);
+					else if (AlphaCharacter.numbers.indexOf(character.toLowerCase()) != -1)
+						letter.createNumber(character);
 				}
 
 				add(letter);
@@ -176,8 +196,8 @@ class Alphabet extends FlxSpriteGroup
 				}
 				// trace(_finalText.fastCodeAt(loopNum) + " " + _finalText.charAt(loopNum));
 
-				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0);
-				var letter:AlphaCharacter = new AlphaCharacter(xPos, 55 * yMulti);
+				// var letter:AlphaCharacter = new AlphaCharacter(30 * loopNum, 0, textSize);
+				var letter:AlphaCharacter = new AlphaCharacter(xPos, 55 * yMulti, textSize);
 				letter.row = curRow;
 				if (isBold)
 				{
@@ -224,8 +244,17 @@ class Alphabet extends FlxSpriteGroup
 		{
 			var scaledY = FlxMath.remapToRange(targetY, 0, 1, 0, 1.3);
 
-			y = FlxMath.lerp(y, (scaledY * 120) + (FlxG.height * 0.48), 0.16);
-			x = FlxMath.lerp(x, (targetY * 20) + 90, 0.16);
+			var lerpVal:Float = CoolUtil.boundTo(elapsed * lerpMult, 0, 1);
+			if(forceX != Math.NEGATIVE_INFINITY) {
+				x = forceX;
+			} else {
+				x = FlxMath.lerp(x, (targetY * 20) + 90 + xAdd, lerpVal);
+			}
+			if(forceY != Math.NEGATIVE_INFINITY) {
+				y = forceY;
+			} else {
+				y = FlxMath.lerp(y, (scaledY * yMult) + (FlxG.height * 0.48) + yAdd, lerpVal);
+			}
 		}
 
 		super.update(elapsed);
@@ -242,12 +271,14 @@ class AlphaCharacter extends FlxSprite
 
 	public var row:Int = 0;
 
-	public function new(x:Float, y:Float)
+	public function new(x:Float, y:Float, textSize:Float)
 	{
 		super(x, y);
 		var tex = Paths.getSparrowAtlas('alphabet');
 		frames = tex;
 
+		setGraphicSize(Std.int(width * textSize));
+		updateHitbox();
 		antialiasing = true;
 	}
 
@@ -288,19 +319,84 @@ class AlphaCharacter extends FlxSprite
 	{
 		switch (letter)
 		{
+			case '|':
+				animation.addByPrefix(letter, '|', 24);
+				animation.play(letter);
+			case '~':
+				animation.addByPrefix(letter, '~', 24);
+				animation.play(letter);
+			case '#':
+				animation.addByPrefix(letter, 'hashtag', 24);
+				animation.play(letter);
+			case '$':
+				animation.addByPrefix(letter, 'dollarsign', 24);
+				animation.play(letter);
+			case '%':
+				animation.addByPrefix(letter, '%', 24);
+				animation.play(letter);
+			case '(':
+				animation.addByPrefix(letter, '(', 24);
+				animation.play(letter);
+			case ')':
+				animation.addByPrefix(letter, ')', 24);
+				animation.play(letter);
+			case '*':
+				animation.addByPrefix(letter, '*', 24);
+				animation.play(letter);
+			case '+':
+				animation.addByPrefix(letter, '+', 24);
+				animation.play(letter);
+			case '-':
+				animation.addByPrefix(letter, '-', 24);
+				animation.play(letter);
+			case ':':
+				animation.addByPrefix(letter, ':', 24);
+				animation.play(letter);
+			case ';':
+				animation.addByPrefix(letter, ';', 24);
+				animation.play(letter);
+			case '<':
+				animation.addByPrefix(letter, '<', 24);
+				animation.play(letter);
+			case '=':
+				animation.addByPrefix(letter, '=', 24);
+				animation.play(letter);
+			case '>':
+				animation.addByPrefix(letter, '>', 24);
+				animation.play(letter);
+			case '@':
+				animation.addByPrefix(letter, '@', 24);
+				animation.play(letter);
+			case '[':
+				animation.addByPrefix(letter, '[', 24);
+				animation.play(letter);
+			case ']':
+				animation.addByPrefix(letter, ']', 24);
+				animation.play(letter);
+			case '^':
+				animation.addByPrefix(letter, '^', 24);
+				animation.play(letter);
+			case '_':
+				animation.addByPrefix(letter, '_', 24);
+				animation.play(letter);
+				y += 50;
 			case '.':
 				animation.addByPrefix(letter, 'period', 24);
+				animation.play(letter);
+				y += 50;
+			case ',':
+				animation.addByPrefix(letter, 'comma', 24);
 				animation.play(letter);
 				y += 50;
 			case "'":
 				animation.addByPrefix(letter, 'apostraphie', 24);
 				animation.play(letter);
 				y -= 0;
-			case "?":
-				animation.addByPrefix(letter, 'question mark', 24);
-				animation.play(letter);
 			case "!":
 				animation.addByPrefix(letter, 'exclamation point', 24);
+				animation.play(letter);
+			case "?":
+				animation.addByPrefix(letter, 'question mark', 24);
 				animation.play(letter);
 		}
 
