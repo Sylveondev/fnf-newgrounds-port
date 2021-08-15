@@ -235,7 +235,7 @@ class ControlsSubstate extends MusicBeatSubstate {
 		var max:Int = 0;
 		var selected:Int = 0;
 		for (i in 0...grpOptions.length) {
-			if(!unselectableCheck(i)) {
+			if(grpOptions.members != null && !unselectableCheck(i)) {
 				if(grpOptions.members[i].targetY == 0) selected = max;
 				max++;
 			}

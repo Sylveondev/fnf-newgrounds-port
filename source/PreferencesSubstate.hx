@@ -159,24 +159,27 @@ class PreferencesSubstate extends MusicBeatSubstate
 		for (i in 0...grpOptions.length) {
 			for (j in 0...checkboxArray.length) {
 				var checkbox:CheckboxThingie = checkboxArray[j];
-				if(checkbox != null && checkbox.sprTracker == grpOptions.members[i]) {
-					var daValue:Bool = false;
-					switch(options[i]) {
-						case 'Naughtyness':
-							daValue = ClientPrefs.naughtyness;
-						case 'Downscroll':
-							daValue = ClientPrefs.downScroll;
-						case 'Flashing Menu':
-							daValue = ClientPrefs.flashingMenu;
-						case 'Camera Zooming On Beat':
-							daValue = ClientPrefs.cameraZoomingOnBeat;
-						case 'FPS Counter':
-							daValue = ClientPrefs.fpsCounter;
-						case 'Auto Pause':
-							daValue = ClientPrefs.autoPause;
+				if(checkbox != null && grpOptions.members != null)
+				{
+					if (checkbox.sprTracker == grpOptions.members[i]) {
+						var daValue:Bool = false;
+						switch(options[i]) {
+							case 'Naughtyness':
+								daValue = ClientPrefs.naughtyness;
+							case 'Downscroll':
+								daValue = ClientPrefs.downScroll;
+							case 'Flashing Menu':
+								daValue = ClientPrefs.flashingMenu;
+							case 'Camera Zooming On Beat':
+								daValue = ClientPrefs.cameraZoomingOnBeat;
+							case 'FPS Counter':
+								daValue = ClientPrefs.fpsCounter;
+							case 'Auto Pause':
+								daValue = ClientPrefs.autoPause;
+						}
+						checkbox.set_daValue(daValue);
+						break;
 					}
-					checkbox.set_daValue(daValue);
-					break;
 				}
 			}
 		}
