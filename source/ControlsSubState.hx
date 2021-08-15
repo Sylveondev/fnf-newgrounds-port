@@ -1,5 +1,6 @@
 package;
 
+import Alphabet.ExAlphabet;
 import flixel.addons.display.shapes.FlxShapeType;
 import flixel.group.FlxGroup;
 import flixel.addons.display.shapes.FlxShapeBox;
@@ -46,7 +47,7 @@ class ControlsSubstate extends MusicBeatSubstate {
 		'Back',
 		'Pause',];
 
-	private var grpOptions:FlxTypedGroup<Alphabet>;
+	private var grpOptions:FlxTypedGroup<ExAlphabet>;
 	private var grpInputs:Array<InputItem> = [];
 	private var controlArray:Array<FlxKey> = [];
 	var rebindingKey:Int = -1;
@@ -59,8 +60,9 @@ class ControlsSubstate extends MusicBeatSubstate {
 		super();
 
 		curSelected = 1;
+		curAlt = false;
 
-		grpOptions = new FlxTypedGroup<Alphabet>();
+		grpOptions = new FlxTypedGroup<ExAlphabet>();
 		add(grpOptions);
 
 		controlArray = ClientPrefs.lastControls.copy();
@@ -70,7 +72,7 @@ class ControlsSubstate extends MusicBeatSubstate {
 				isCentered = true;
 			}
 
-			var optionText:Alphabet = new Alphabet(0, (10 * i), optionShit[i], unselectableCheck(i) || !isCentered, false, 0.05, 1, 9.6, true);
+			var optionText:ExAlphabet = new ExAlphabet(0, (10 * i), optionShit[i], unselectableCheck(i) || !isCentered, 1, 2.6);
 			optionText.isMenuItem = true;
 			if(isCentered) {
 				optionText.screenCenter(X);
@@ -250,7 +252,7 @@ class ControlsSubstate extends MusicBeatSubstate {
 		return value;
 	}
 
-	private function addBindTexts(optionText:Alphabet) {
+	private function addBindTexts(optionText:ExAlphabet) {
 		var text1 = new InputItem(InputFormatter.getKeyName(controlArray[grpInputs.length]), 400, -55);
 		// trace('text1:'+text1.text);
 		text1.setPosition(optionText.x + 400, optionText.y - 55);
