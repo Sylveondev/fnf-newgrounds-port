@@ -24,11 +24,25 @@ class TrailerState extends MusicBeatState
 		{
 			trace("cutscene finished");
 			Main.cutscene.visible = false;
+			TitleState.initialized = false;
 			FlxG.switchState(new TitleState());
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 		});
 		#else
 		FlxG.switchState(new TitleState());
 		#end
+	}
+
+	override function update(elapsed:Float)
+	{
+		if (controls.BACK)
+		{
+			trace("cutscene skipped");
+			Main.cutsceneStream.pause();
+			Main.cutscene.visible = false;
+			TitleState.initialized = false;
+			FlxG.switchState(new TitleState());
+		}
+
+		super.update(elapsed);
 	}
 }
