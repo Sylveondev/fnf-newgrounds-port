@@ -17,6 +17,7 @@ class TrailerState extends MusicBeatState
 
 		FlxG.sound.music.stop();
 
+		TitleState.initialized = false;
 		#if web
 		Main.cutscene.visible = true;
 		Main.cutsceneStream.play('assets/music/kickstarterTrailer.mp4');
@@ -24,10 +25,10 @@ class TrailerState extends MusicBeatState
 		{
 			trace("cutscene finished");
 			Main.cutscene.visible = false;
-			TitleState.initialized = false;
 			FlxG.switchState(new TitleState());
 		});
 		#else
+		// This is to be fixed with newer code once cutscenes are implemented for other platforms
 		FlxG.switchState(new TitleState());
 		#end
 	}
