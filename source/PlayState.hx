@@ -2069,7 +2069,6 @@ class PlayState extends MusicBeatState
 
 			if (storyPlaylist.length <= 0)
 			{
-				FlxG.sound.playMusic(Paths.music('freakyMenu'));
 
 				transIn = FlxTransitionableState.defaultTransIn;
 				transOut = FlxTransitionableState.defaultTransOut;
@@ -2126,11 +2125,13 @@ class PlayState extends MusicBeatState
 		else
 		{
 			trace('WENT BACK TO FREEPLAY??');
-			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 			FlxG.switchState(new FreeplayState());
 			usedPractice = false;
 			changedDifficulty = false;
 		}
+
+		if (!isStoryMode || (isStoryMode && storyPlaylist.length <= 0))
+			FlxG.sound.playMusic(Paths.music('freakyMenu'));
 	}
 
 	var endingSong:Bool = false;
