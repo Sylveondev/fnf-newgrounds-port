@@ -11,7 +11,7 @@ class ClientPrefs {
 	public static var flashingMenu:Bool = true;
 	public static var cameraZoomingOnBeat:Bool = true;
 	public static var fpsCounter:Bool = true;
-	public static var autoPause:Bool = true;
+	public static var autoPause:Bool = false;
 
 	public static var defaultKeys:Array<FlxKey> = [
 		A, LEFT,			//Note Left
