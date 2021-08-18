@@ -100,10 +100,6 @@ class Main extends Sprite
 				Main.fpsVar.x = -100;
 			}
 		}
-		if (ClientPrefs.autoPause) {
-			FlxG.autoPause = true;
-		} else {
-			FlxG.autoPause = false;
-		}
+		FlxG.autoPause = ClientPrefs.autoPause;
 	}
 }
