@@ -103,10 +103,6 @@
 	-->
 	<assets path="assets/fonts" embed='true'/>
 
-	<!-- FFmpeg hell -->
-	<assets path="ffmpeg/windows" if="windows"/>
-	<assets path="ffmpeg/mac" if="mac"/>
-	<assets path="ffmpeg/linux" if="linux"/>
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
