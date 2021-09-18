@@ -6,7 +6,7 @@ import flixel.FlxG;
 import haxe.ds.StringMap;
 import flixel.group.FlxGroup.FlxTypedGroup;
 
-enum Direction
+enum MenuListDirection
 {
 	Horizontal;
 	Vertical;
@@ -18,10 +18,10 @@ class MenuTypedList extends FlxTypedGroup<MainMenuItem>
 {
 	public var busy:Bool;
 	public var byName:StringMap<MainMenuItem>;
-	public var wrapMode:Direction;
+	public var wrapMode:MenuListDirection;
 	public var enabled:Bool;
 	public var selectedIndex:Int;
-	public var navControls:Direction;
+	public var navControls:MenuListDirection;
 
 	public var onChange:Dynamic;
 	public var onAcceptPress:Dynamic;
@@ -30,7 +30,7 @@ class MenuTypedList extends FlxTypedGroup<MainMenuItem>
 	inline function get_controls():Controls
 		return PlayerSettings.player1.controls;
 
-	public function new(dir:Direction = null, wrapDir:Direction = null)
+	public function new(dir:MenuListDirection = null, wrapDir:MenuListDirection = null)
 	{
 		if (dir == null) dir = Vertical;
 		busy = false;
@@ -63,13 +63,13 @@ class MenuTypedList extends FlxTypedGroup<MainMenuItem>
 		return add(item);
 	}
 
-	public function resetItem(name, newName, c)
+	public function resetItem(name:String, newName:String, callback:Dynamic = null)
 	{
 		if (!byName.exists(name)) throw ("No item named:"+name);
 		var item = byName.get(name);
 		if (byName.exists(name)) byName.remove(name);
 		byName.set(newName, item);
-		item.setItem(newName, c);
+		item.setItem(newName, callback);
 		return item;
 	}
 

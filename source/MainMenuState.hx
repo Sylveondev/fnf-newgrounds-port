@@ -185,9 +185,9 @@ class MainMenuItem extends AtlasMenuItem
 		fireInstantly = false;
 	}
 
-	public override function changeAnim(a)
+	public override function changeAnim(anim:String)
 	{
-		super.changeAnim(a);
+		super.changeAnim(anim);
 		origin.set(0.5 * frameWidth, 0.5 * frameHeight);
 		offset.x = origin.x;
 		offset.y = origin.y;
@@ -205,11 +205,11 @@ class MainMenuList extends MenuTypedList
 		super(Vertical);
 	}
 
-	public function createItem(X:Float = 0, Y:Float = 0, c, d, e:Bool = false)
+	public function createItem(X:Float = 0, Y:Float = 0, name:String, callback:Dynamic = null, fireInstantly:Bool = false)
 	{
-		var a = new MainMenuItem(X, Y, c, this.atlas, d);
-		a.fireInstantly = e;
+		var a = new MainMenuItem(X, Y, name, this.atlas, callback);
+		a.fireInstantly = fireInstantly;
 		a.ID = this.length;
-		return this.addItem(c, a);
+		return this.addItem(name, a);
 	}
 }
