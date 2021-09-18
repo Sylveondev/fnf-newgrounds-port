@@ -27,6 +27,7 @@ class FreeplayState extends MusicBeatState
 	var curDifficulty:Int = 1;
 
 	var scoreText:FlxText;
+	var scoreBG:FlxSprite;
 	var diffText:FlxText;
 	var lerpScore:Int = 0;
 	var intendedScore:Int = 0;
@@ -35,7 +36,7 @@ class FreeplayState extends MusicBeatState
 	private var curPlaying:Bool = false;
 
 	private var iconArray:Array<HealthIcon> = [];
-	public static var coolColors:Array<Int> = [-7179779, -7179779, -14535868, -7072173, -223529, -6237697, -34625, -413638];
+	public static var coolColors:Array<Int> = [0xFF9271FD, 0xFF9271FD, 0xFF223344, 0xFF941653, 0xFFFC96D7, 0xFFA0D1FF, 0xFFFF78BF, 0xFFF6B604];
 
 	var bg:FlxSprite;
 	private var intendedColor:Int;
@@ -129,7 +130,8 @@ class FreeplayState extends MusicBeatState
 		scoreText.setFormat(Paths.font("vcr.ttf"), 32, FlxColor.WHITE, RIGHT);
 		// scoreText.alignment = RIGHT;
 
-		var scoreBG:FlxSprite = new FlxSprite(scoreText.x - 6, 0).makeGraphic(Std.int(FlxG.width * 0.35), 66, 0xFF000000);
+		scoreBG = new FlxSprite(scoreText.x - 6, 0).makeGraphic(1, 66, 0xFF000000);
+		scoreBG.antialiasing = false;
 		scoreBG.alpha = 0.6;
 		add(scoreBG);
 
@@ -201,12 +203,31 @@ class FreeplayState extends MusicBeatState
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
 
-		lerpScore = Math.floor(FlxMath.lerp(lerpScore, intendedScore, 0.4));
+		lerpScore = Std.int(CoolUtil.coolLerp(lerpScore, intendedScore, 0.4));
 
-		if (Math.abs(lerpScore - intendedScore) <= 10)
-			lerpScore = intendedScore;
+		// Sorry about this, but I'm basically copying and pasting the compiled code here. If someone could simplify this but keep the exact same function, please do.
+		var b = Std.parseInt(bg.color.toHexString()),
+			c:Null<Int> = coolColors[songs[curSelected].week %
+				coolColors.length],
+			d:Null<Float> = CoolUtil.camLerpShit(0.045);
+		if (d == null) d = 0.5;
+		var e = Std.int(((c >> 16 & 255) - (b >> 16 & 255)) * d + (b >> 16 & 255)) | 0,
+			f = Std.int(((c >> 8 & 255) - (b >> 8 & 255)) * d + (b >> 8 & 255)) | 0,
+			h = Std.int(((c & 255) - (b & 255)) * d + (b & 255)) | 0;
+			c = Std.int(((c >> 24 & 255) - (b >> 24 & 255)) * d + (b >> 24 & 255)) | 0;
+		if (c == null) c = 255;
+		b = new FlxColor();
+		if (c == null) c = 255;
+		b = (b & -16711681 | (255 < e ? 255 : 0 > e ? 0 : e) << 16) & -65281 | (255 < f ? 255 : 0 > f ? 0 : f) << 8;
+		b &= -256;
+		b |= 255 < h ? 255 : 0 > h ? 0 : h;
+		b &= 16777215;
+		b |= (255 < c ? 255 : 0 > c ? 0 : c) << 24;
+		bg.color = b;
+		// Alright, shit's over. Sincere apologies yet again, but at least it works.
 
 		scoreText.text = "PERSONAL BEST:" + lerpScore;
+		positionHighscore();
 
 		var upP = controls.UI_UP_P;
 		var downP = controls.UI_DOWN_P;
@@ -240,7 +261,6 @@ class FreeplayState extends MusicBeatState
 
 			PlayState.SONG = Song.loadFromJson(poop, songs[curSelected].songName.toLowerCase());
 			PlayState.isStoryMode = false;
-			PlayState.storyDifficulty = curDifficulty;
 
 			PlayState.storyWeek = songs[curSelected].week;
 			trace('CUR WEEK' + PlayState.storyWeek);
@@ -262,15 +282,9 @@ class FreeplayState extends MusicBeatState
 		intendedScore = Highscore.getScore(songs[curSelected].songName, curDifficulty);
 		#end
 
-		switch (curDifficulty)
-		{
-			case 0:
-				diffText.text = "EASY";
-			case 1:
-				diffText.text = 'NORMAL';
-			case 2:
-				diffText.text = "HARD";
-		}
+		PlayState.storyDifficulty = curDifficulty;
+		diffText.text = '< ${CoolUtil.difficultyString()} >';
+		positionHighscore();
 	}
 
 	function changeSelection(change:Int = 0)
@@ -283,13 +297,6 @@ class FreeplayState extends MusicBeatState
 			curSelected = songs.length - 1;
 		if (curSelected >= songs.length)
 			curSelected = 0;
-
-		var newColor:Int = songs[curSelected].color;
-		if(newColor != intendedColor) {
-			FlxTween.cancelTweensOf(bg);
-			intendedColor = newColor;
-			FlxTween.color(bg, 0.75, bg.color, intendedColor, { ease: FlxEase.quadOut });
-		}
 
 		// selector.y = (70 * curSelected) + 30;
 
@@ -326,6 +333,15 @@ class FreeplayState extends MusicBeatState
 			}
 		}
 	}
+
+	function positionHighscore()
+	{
+		scoreText.x = FlxG.width - scoreText.width - 6;
+		scoreBG.scale.x = FlxG.width - scoreText.x + 6;
+		scoreBG.x = FlxG.width - scoreBG.scale.x / 2;
+		diffText.x = Std.int(scoreBG.x + scoreBG.width / 2);
+		diffText.x -= diffText.width / 2;
+	}
 }
 
 class SongMetadata
@@ -333,13 +349,11 @@ class SongMetadata
 	public var songName:String = "";
 	public var week:Int = 0;
 	public var songCharacter:String = "";
-	public var color:Int = -7179779;
 
 	public function new(song:String, week:Int, songCharacter:String)
 	{
 		this.songName = song;
 		this.week = week;
 		this.songCharacter = songCharacter;
-		this.color = FreeplayState.coolColors[week];
 	}
 }
