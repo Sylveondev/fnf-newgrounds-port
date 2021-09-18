@@ -1,5 +1,7 @@
 package;
 
+import flixel.util.FlxTimer;
+import flixel.util.FlxSave;
 #if desktop
 import Discord.DiscordClient;
 #end
@@ -22,13 +24,7 @@ class MainMenuState extends MusicBeatState
 {
 	var curSelected:Int = 0;
 
-	var menuItems:FlxTypedGroup<FlxSprite>;
-
-	#if !switch
-	var optionShit:Array<String> = ['story mode', 'freeplay', /*'donate',*/ 'kickstarter', 'options'];
-	#else
-	var optionShit:Array<String> = ['story mode', 'freeplay'];
-	#end
+	var menuItems:MainMenuList;
 
 	var magenta:FlxSprite;
 	var camFollow:FlxObject;
@@ -52,8 +48,8 @@ class MainMenuState extends MusicBeatState
 
 		var bg:FlxSprite = new FlxSprite(-80).loadGraphic(Paths.image('menuBG'));
 		bg.scrollFactor.x = 0;
-		bg.scrollFactor.y = 0.18;
-		bg.setGraphicSize(Std.int(bg.width * 1.1));
+		bg.scrollFactor.y = 0.17;
+		bg.setGraphicSize(Std.int(bg.width * 1.2));
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.antialiasing = true;
@@ -63,179 +59,157 @@ class MainMenuState extends MusicBeatState
 		add(camFollow);
 
 		magenta = new FlxSprite(-80).loadGraphic(Paths.image('menuDesat'));
-		magenta.scrollFactor.x = 0;
-		magenta.scrollFactor.y = 0.18;
-		magenta.setGraphicSize(Std.int(magenta.width * 1.1));
+		magenta.scrollFactor.x = bg.scrollFactor.x;
+		magenta.scrollFactor.y = bg.scrollFactor.y;
+		magenta.setGraphicSize(Std.int(bg.width));
 		magenta.updateHitbox();
-		magenta.screenCenter();
+		magenta.x = bg.x;
+		magenta.y = bg.y;
 		magenta.visible = false;
 		magenta.antialiasing = true;
-		magenta.color = 0xFFfd719b;
-		add(magenta);
-		// magenta.scrollFactor.set();
+		magenta.color = 0xFFFD719B;
+		if (ClientPrefs.flashingMenu) add(magenta);
 
-		menuItems = new FlxTypedGroup<FlxSprite>();
+		menuItems = new MainMenuList();
 		add(menuItems);
-
-		var tex = Paths.getSparrowAtlas('main_menu');
-
-		for (i in 0...optionShit.length)
+		menuItems.onChange = onMenuItemChange;
+		menuItems.onAcceptPress = function(b)
 		{
-			var properFuckingName = optionShit[i].replace('_', ''); // shitty story mode fix
-			var menuItem:FlxSprite = new FlxSprite(0, 60 + (i * 160));
-			menuItem.frames = tex;
-			menuItem.animation.addByPrefix('idle', properFuckingName + " idle", 24);
-			menuItem.animation.addByPrefix('selected', properFuckingName + " selected", 24);
-			menuItem.animation.play('idle');
-			menuItem.ID = i;
-			menuItem.screenCenter(X);
-			menuItems.add(menuItem);
-			menuItem.scrollFactor.set(0);
-			menuItem.antialiasing = true;
+			FlxFlicker.flicker(magenta, 1.1, 0.15, false, true);
 		}
+		
+		var gsave:FlxSave = new FlxSave();
+		gsave.bind('gamedata', 'newgrounds');
+
+		menuItems.createItem(0, 0, "story mode", function()
+		{
+			startExitState(new StoryMenuState());
+		});
+		menuItems.createItem(0, 0, "freeplay", function()
+		{
+			startExitState(new FreeplayState());
+		});
+		if (gsave.data.seenTrailer == true)
+		{
+			menuItems.createItem(0, 0, "kickstarter", selectDonate, true);
+		}
+		else
+		{
+			menuItems.createItem(0, 0, "donate", selectDonate, true);
+		}
+		menuItems.createItem(0, 0, "options", function()
+		{
+			startExitState(new OptionsState());
+		});
+
+		// sorry for this looking so shitty, literally reverse engineering this and I have no var names
+		var curItem, daWeirdVar = (FlxG.height - 160 * (menuItems.length - 1)) / 2;
+		for (i in 0...menuItems.length)
+		{
+			curItem = menuItems.members[i];
+			curItem.x = FlxG.width / 2;
+			curItem.y = daWeirdVar + 160 * i;
+		}
+		// end of the shittiness...for now
 
 		FlxG.camera.follow(camFollow, null, 0.06);
 
-		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "v" + Application.current.meta.get('version') + '(Newgrounds exclusive preview)', 12);
+		var versionShit:FlxText = new FlxText(5, FlxG.height - 18, 0, "v" + Application.current.meta.get('version'), 12);
 		versionShit.scrollFactor.set();
 		versionShit.setFormat("VCR OSD Mono", 16, FlxColor.WHITE, LEFT, FlxTextBorderStyle.OUTLINE, FlxColor.BLACK);
 		add(versionShit);
-
-		// NG.core.calls.event.logEvent('swag').send();
-
-		changeItem();
+		versionShit.text += "(Newgrounds exclusive preview)";
 
 		super.create();
 	}
 
-	var selectedSomethin:Bool = false;
-
 	override function update(elapsed:Float)
 	{
+		FlxG.camera.followLerp = CoolUtil.camLerpShit(0.06);
+
 		if (FlxG.sound.music.volume < 0.8)
 		{
 			FlxG.sound.music.volume += 0.5 * FlxG.elapsed;
 		}
-
-		if (!selectedSomethin)
+		
+		if (_exiting) menuItems.enabled = false;
+		if (controls.BACK && menuItems.enabled && !menuItems.busy)
 		{
-			if (controls.UI_UP_P)
-			{
-				FlxG.sound.play(Paths.sound('scrollMenu'));
-				changeItem(-1);
-			}
-
-			if (controls.UI_DOWN_P)
-			{
-				FlxG.sound.play(Paths.sound('scrollMenu'));
-				changeItem(1);
-			}
-
-			if (controls.BACK)
-			{
-				FlxG.switchState(new TitleState());
-			}
-
-			if (controls.ACCEPT)
-			{
-				if (optionShit[curSelected] == 'donate')
-				{
-					#if linux
-					Sys.command('/usr/bin/xdg-open', ["https://ninja-muffin24.itch.io/funkin", "&"]);
-					#else
-					FlxG.openURL('https://ninja-muffin24.itch.io/funkin');
-					#end
-				}
-				else if (optionShit[curSelected] == 'kickstarter')
-				{
-					#if linux
-					Sys.command('/usr/bin/xdg-open', ["https://www.kickstarter.com/projects/funkin/friday-night-funkin-the-full-ass-game", "&"]);
-					#else
-					FlxG.openURL('https://www.kickstarter.com/projects/funkin/friday-night-funkin-the-full-ass-game');
-					#end
-				}
-				else
-				{
-					selectedSomethin = true;
-					FlxG.sound.play(Paths.sound('confirmMenu'));
-
-					if (ClientPrefs.flashingMenu) FlxFlicker.flicker(magenta, 1.1, 0.15, false);
-
-					menuItems.forEach(function(spr:FlxSprite)
-					{
-						if (curSelected != spr.ID)
-						{
-							FlxTween.tween(spr, {alpha: 0}, 0.4, {
-								ease: FlxEase.quadOut,
-								onComplete: function(twn:FlxTween)
-								{
-									spr.kill();
-								}
-							});
-						}
-						else
-						{
-							FlxFlicker.flicker(spr, 1, 0.06, false, false, function(flick:FlxFlicker)
-							{
-								var daChoice:String = optionShit[curSelected];
-
-								switch (daChoice)
-								{
-									case 'story mode':
-										FlxG.switchState(new StoryMenuState());
-										trace("Story Menu Selected");
-									case 'freeplay':
-										FlxG.switchState(new FreeplayState());
-
-										trace("Freeplay Menu Selected");
-
-									case 'options':
-										FlxG.switchState(new OptionsState());
-								}
-							});
-						}
-					});
-				}
-			}
+			FlxG.switchState(new TitleState());
 		}
 
 		super.update(elapsed);
-
-		menuItems.forEach(function(spr:FlxSprite)
-		{
-			spr.screenCenter(X);
-		});
 	}
 
-	function changeItem(huh:Int = 0)
+	function startExitState(whereWeGoing:Dynamic)
 	{
-		curSelected += huh;
-
-		if (curSelected >= menuItems.length)
-			curSelected = 0;
-		if (curSelected < 0)
-			curSelected = menuItems.length - 1;
-
-		menuItems.forEach(function(spr:FlxSprite)
+		menuItems.enabled = false;
+		menuItems.forEach(function(item)
 		{
-			spr.animation.play('idle');
-			spr.offset.y = 0;
-
-			if (spr.ID == curSelected)
+			if (menuItems.selectedIndex != item.ID)
 			{
-				spr.animation.play('selected');
-				spr.updateHitbox();
-				// angel's spaghetti code ツ
-				var bruhOffset = ((spr.ID == 0 || spr.ID == menuItems.length-1) ? 0.1 : 0.2) * spr.frameHeight /* (0.3 - (spr.ID * 0.05)) * spr.frameHeight */;
-				var extraBruhOffset = (spr.ID == 0) ? 2 : ((spr.ID == menuItems.length-1) ? 16 : 8);
-				trace("bruhOffset:" + bruhOffset + " extraBruhOffset:" + extraBruhOffset);
-				spr.offset.y = bruhOffset;
-				camFollow.setPosition(spr.getGraphicMidpoint().x, spr.getGraphicMidpoint().y-bruhOffset-extraBruhOffset);
+				FlxTween.tween(item, { alpha: 0 }, 0.4, { ease: FlxEase.quadOut });
 			}
 			else
 			{
-				spr.updateHitbox();
+				item.visible = false;
 			}
 		});
+		new FlxTimer().start(0.4, function(tmr:FlxTimer)
+		{
+			FlxG.switchState(whereWeGoing);
+		});
+	}
+
+	function onMenuItemChange(item:MainMenuItem)
+	{
+		camFollow.setPosition(item.getGraphicMidpoint().x, item.getGraphicMidpoint().y);
+	}
+
+	function selectDonate()
+	{
+		#if linux
+		Sys.command('/usr/bin/xdg-open', ["https://www.kickstarter.com/projects/funkin/friday-night-funkin-the-full-ass-game", "&"]);
+		#else
+		FlxG.openURL('https://www.kickstarter.com/projects/funkin/friday-night-funkin-the-full-ass-game');
+		#end
+	}
+}
+
+class MainMenuItem extends AtlasMenuItem
+{
+	public function new(X:Float = 0, Y:Float = 0, name:String, atlas:FlxAtlasFrames, callback:Dynamic)
+	{
+		super(X, Y, name, atlas, callback);
+		this.scrollFactor.set();
+		fireInstantly = false;
+	}
+
+	public override function changeAnim(a)
+	{
+		super.changeAnim(a);
+		origin.set(0.5 * frameWidth, 0.5 * frameHeight);
+		offset.x = origin.x;
+		offset.y = origin.y;
+		origin.putWeak();
+	}
+}
+
+class MainMenuList extends MenuTypedList
+{
+	var atlas:FlxAtlasFrames;
+
+	public function new()
+	{
+		atlas = Paths.getSparrowAtlas('main_menu');
+		super(Vertical);
+	}
+
+	public function createItem(X:Float = 0, Y:Float = 0, c, d, e:Bool = false)
+	{
+		var a = new MainMenuItem(X, Y, c, this.atlas, d);
+		a.fireInstantly = e;
+		a.ID = this.length;
+		return this.addItem(c, a);
 	}
 }

@@ -1,49 +1,48 @@
 package;
 
-import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.graphics.frames.FlxAtlasFrames;
-import flixel.group.FlxSpriteGroup;
-import flixel.math.FlxMath;
-import flixel.util.FlxColor;
 
-class MenuItem extends FlxSpriteGroup
+using StringTools;
+
+class MenuItem extends FlxSprite
 {
-	public var targetY:Float = 0;
-	public var week:FlxSprite;
-	public var flashingInt:Int = 0;
+	public var fireInstantly:Bool;
+	public var name:String;
+	public var callback:Dynamic;
 
-	public function new(x:Float, y:Float, weekNum:Int = 0)
+	public function new(X:Float = 0, Y:Float = 0, name:String = "", callback:Dynamic = null)
 	{
-		super(x, y);
-		week = new FlxSprite().loadGraphic(Paths.image('storymenu/week' + weekNum));
-		add(week);
+		fireInstantly = false;
+		super(X, Y);
+		antialiasing = true;
+		setData(name, callback);
+		idle();
 	}
 
-	private var isFlashing:Bool = false;
-
-	public function startFlashing():Void
+	public function get_selected()
 	{
-		isFlashing = true;
+		return this.alpha == 1;
 	}
 
-	// if it runs at 60fps, fake framerate will be 6
-	// if it runs at 144 fps, fake framerate will be like 14, and will update the graphic every 0.016666 * 3 seconds still???
-	// so it runs basically every so many seconds, not dependant on framerate??
-	// I'm still learning how math works thanks whoever is reading this lol
-	var fakeFramerate:Int = Math.round((1 / FlxG.elapsed) / 10);
-
-	override function update(elapsed:Float)
+	public function setData(name:String, callback:Dynamic = null)
 	{
-		super.update(elapsed);
-		y = FlxMath.lerp(y, (targetY * 120) + 480, 0.17);
+		this.name = name;
+		if (callback != null) this.callback = callback;
+	}
 
-		if (isFlashing)
-			flashingInt += 1;
+	public function setItem(a, b)
+	{
+		setData(a, b);
+		get_selected() ? select() : idle();
+	}
 
-		if (flashingInt % fakeFramerate >= Math.floor(fakeFramerate / 2))
-			week.color = 0xFF33ffff;
-		else
-			week.color = FlxColor.WHITE;
+	public function idle()
+	{
+		this.set_alpha(0.6);
+	}
+
+	public function select()
+	{
+		this.set_alpha(1);
 	}
 }
