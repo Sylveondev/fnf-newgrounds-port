@@ -39,7 +39,6 @@ class FreeplayState extends MusicBeatState
 	public static var coolColors:Array<Int> = [0xFF9271FD, 0xFF9271FD, 0xFF223344, 0xFF941653, 0xFFFC96D7, 0xFFA0D1FF, 0xFFFF78BF, 0xFFF6B604];
 
 	var bg:FlxSprite;
-	private var intendedColor:Int;
 
 	override function create()
 	{
