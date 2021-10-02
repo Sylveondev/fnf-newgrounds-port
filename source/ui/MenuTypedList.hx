@@ -1,4 +1,4 @@
-package;
+package ui;
 
 import flixel.effects.FlxFlicker;
 import MainMenuState.MainMenuItem;

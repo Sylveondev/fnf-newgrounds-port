@@ -1,5 +1,7 @@
 package;
 
+import shaderslmfao.BuildingShaders;
+import shaderslmfao.ColorSwap;
 #if desktop
 import Discord.DiscordClient;
 import sys.thread.Thread;
@@ -38,6 +40,8 @@ class TitleState extends MusicBeatState
 	var credTextShit:Alphabet;
 	var textGroup:FlxGroup;
 	var ngSpr:FlxSprite;
+	var swagShader:ColorSwap;
+	var alphaShader:BuildingShaders;
 
 	var curWacky:Array<String> = [];
 
@@ -50,6 +54,13 @@ class TitleState extends MusicBeatState
 		#end
 
 		PlayerSettings.init();
+
+		FlxG.game.focusLostFramerate = 60;
+
+		swagShader = new ColorSwap();
+		alphaShader = new BuildingShaders();
+
+		FlxG.sound.muteKeys = [ZERO];
 
 		curWacky = FlxG.random.getObject(getIntroTextShit());
 
@@ -75,16 +86,15 @@ class TitleState extends MusicBeatState
 				StoryMenuState.weekUnlocked[0] = true;
 		}
 
-		#if FREEPLAY
-		FlxG.switchState(new FreeplayState());
-		#elseif CHARTING
-		FlxG.switchState(new ChartingState());
-		#else
+		if (FlxG.save.data.seenVideo != null)
+		{
+			TrailerState.seenVideo = FlxG.save.data.seenVideo;
+		}
+
 		new FlxTimer().start(1, function(tmr:FlxTimer)
 		{
 			startIntro();
 		});
-		#end
 
 		#if desktop
 		DiscordClient.initialize();
@@ -146,6 +156,7 @@ class TitleState extends MusicBeatState
 		logoBl.updateHitbox();
 		// logoBl.screenCenter();
 		// logoBl.color = FlxColor.BLACK;
+		logoBl.shader = swagShader.shader;
 
 		gfDance = new FlxSprite(FlxG.width * 0.4, FlxG.height * 0.07);
 		gfDance.frames = Paths.getSparrowAtlas('gfDanceTitle');
@@ -153,6 +164,7 @@ class TitleState extends MusicBeatState
 		gfDance.animation.addByIndices('danceRight', 'gfDance', [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29], "", 24, false);
 		gfDance.antialiasing = true;
 		add(gfDance);
+		gfDance.shader = swagShader.shader;
 		add(logoBl);
 
 		titleText = new FlxSprite(100, FlxG.height * 0.8);
@@ -204,6 +216,14 @@ class TitleState extends MusicBeatState
 		else
 			initialized = true;
 
+		if (FlxG.sound.music != null)
+		{
+			FlxG.sound.music.onComplete = function()
+			{
+				FlxG.switchState(new TrailerState());
+			};
+		}
+
 		// credGroup.add(credTextShit);
 	}
 
@@ -226,6 +246,11 @@ class TitleState extends MusicBeatState
 
 	override function update(elapsed:Float)
 	{
+		if (FlxG.keys.justPressed.EIGHT)
+		{
+			// FlxG.switchState(new CutsceneAnimTestState());
+		}
+
 		if (FlxG.sound.music != null)
 			Conductor.songPosition = FlxG.sound.music.time;
 		// FlxG.watch.addQuick('amp', FlxG.sound.music.amplitude);
@@ -260,8 +285,10 @@ class TitleState extends MusicBeatState
 			#end
 		}
 
-		if (pressedEnter && !transitioning && skippedIntro)
+		if (pressedEnter && !transitioning && skippedIntro && FlxG.sound.music != null)
 		{
+			FlxG.sound.music.onComplete = null;
+
 			titleText.animation.play('press');
 
 			FlxG.camera.flash(FlxColor.WHITE, 1);
@@ -270,20 +297,27 @@ class TitleState extends MusicBeatState
 			transitioning = true;
 			// FlxG.sound.music.stop();
 
-			new FlxTimer().start(2, function(tmr:FlxTimer)
+			if (!OutdatedSubState.leftState)
 			{
-				// Check if version is outdated
+				// I ripped out the Newgrounds API so there's nothing here, sorry.
+			}
 
-				var version:String = "v" + Application.current.meta.get('version');
-
-				FlxG.switchState(new MainMenuState());
-			});
+			FlxG.switchState(new MainMenuState());
 			// FlxG.sound.play(Paths.music('titleShoot'), 0.7);
 		}
 
-		if (pressedEnter && !skippedIntro)
+		if (pressedEnter && !skippedIntro && initialized)
 		{
 			skipIntro();
+		}
+
+		if (controls.UI_LEFT)
+		{
+			swagShader.update(.1 * -elapsed);
+		}
+		if (controls.UI_RIGHT)
+		{
+			swagShader.update(.1 * elapsed);
 		}
 
 		super.update(elapsed);

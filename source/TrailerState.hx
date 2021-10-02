@@ -11,6 +11,8 @@ using StringTools;
 
 class TrailerState extends MusicBeatState
 {
+	public static var seenVideo:Bool = false;
+	
 	override public function create():Void
 	{
 		super.create();
