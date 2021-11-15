@@ -1,3 +1,7 @@
+<p align="center">⚠️ WARNING: DEPRECATION! ⚠️<br>This repository has been marked deprecated, as it's going to be rebuilt from the ground up as a direct port on a new repo.<br>This repository is here for legacy purposes and will no longer be receiving updates!<br>Please don't use this repository, as it was more of a recreation rather than a direct port.<br>See more info on the new repository below.</p>
+<br>
+<p align="center">ℹ️ INFO: REPLACEMENT REPOSITORY! ℹ️<br>The new repository <strong>will be a direct port</strong> done via reverse engineering.<br>Please check <a href="https://github.com/AngelDTF/FNF-NewgroundsPort">AngelDTF/FNF-NewgroundsPort</a> to see if the direct port is finished!<br>If you 404, worry not. It is still in the makings, but it may take a bit of time as I am currently in the process of moving.</p>
+
 # Friday Night Funkin Newgrounds Port
 
 This is the repository for the Friday Night Funkin Newgrounds Port, based on the vanilla repository, ported Newgrounds content, and filled holes in the code. It isn't the most direct port, but it'll be the best we have until v0.2.8 actually releases.
