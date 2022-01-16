@@ -1,6 +1,8 @@
 <p align="center">⚠️ <strong>WARNING: DEPRECATION!</strong> ⚠️<br>This repository has been marked deprecated, as it's going to be rebuilt from the ground up as a direct port on a new branch.<br>This branch is here for legacy purposes and will no longer be receiving updates!<br>Please don't use this branch, as it was more of a shitty recreation rather than a direct port.<br>See more info on the new branch below.</p>
 <br>
 <p align="center">ℹ️ <strong>INFO: REPLACEMENT BRANCH!</strong> ℹ️<br>The new branch <strong><i>will be a direct port</i></strong> done via reverse engineering.<br>Please check <a href="https://github.com/AngelDTF/FNF-NewgroundsPort/tree/remaster">AngelDTF/FNF-NewgroundsPort:remaster</a> to see if the direct port is finished!</p>
+<br>
+<p align="center">ℹ️ <strong>INFO: DELETED TAGS!</strong> ℹ️<br>This branch contains the following tags that were removed as to not confuse people from newer branches.<br><code>v0.2.8-p1</code>: <a href="https://github.com/AngelDTF/FNF-NewgroundsPort/commit/87fb97227f9d6a24aad720762b80ea3552ebfa0e">commit 87fb972</a></p>
 
 # Friday Night Funkin Newgrounds Port
 
