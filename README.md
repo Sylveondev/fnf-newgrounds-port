@@ -2,7 +2,7 @@
 <br>
 <p align="center">ℹ️ <strong>INFO: REPLACEMENT BRANCH!</strong> ℹ️<br>The new branch <strong><i>will be a direct port</i></strong> done via reverse engineering.<br>Please check <a href="https://github.com/AngelDTF/FNF-NewgroundsPort/tree/remaster">AngelDTF/FNF-NewgroundsPort:remaster</a> to see if the direct port is finished!</p>
 <br>
-<p align="center">ℹ️ <strong>INFO: DELETED TAGS!</strong> ℹ️<br>This branch contains the following tags that were removed as to not confuse people from newer branches.<br><code>v0.2.8-p1</code>: <a href="https://github.com/AngelDTF/FNF-NewgroundsPort/commit/87fb97227f9d6a24aad720762b80ea3552ebfa0e">commit 87fb972</a></p>
+<p align="center">ℹ️ <strong>INFO: DELETED TAGS!</strong> ℹ️<br>This branch contains the following tags that were removed as to not confuse people from newer branches.<br>• <code>v0.2.8-p1</code>: <a href="https://github.com/AngelDTF/FNF-NewgroundsPort/commit/87fb97227f9d6a24aad720762b80ea3552ebfa0e">commit 87fb972</a></p>
 
 # Friday Night Funkin Newgrounds Port
 
